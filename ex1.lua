@@ -1,43 +1,85 @@
 w,h = canvas:attrSize ()
-canvas:attrColor ('red')
-for i=0,800,40 do 
-canvas:drawRect ('fill',8+i,0,5,285)
-end
-for i=0,285,40 do
-canvas:drawRect ('fill',8,0+i,765,5)
-end
-canvas:flush()
-canvas:attrColor ('green')
-for i=0,800,40 do 
-canvas:drawRect ('fill',8+i,285,5,285)
-end
-for i=0,560,40 do 
-canvas:drawRect ('fill',8,285+i,765,5)
-end
-canvas:flush()
 
-local dx,dy = 0
-canvas:attrColor ('yellow')
-canvas:drawRect ('fill',8+dx,285+dy,40,40)
-canvas:flush()
+-- GRID --
+local function grid ()
+  canvas:attrColor ('red')
+  for i=0,800,40 do 
+    canvas:drawRect ('fill',8+i,0,5,285)
+  end
+  for i=0,285,40 do
+    canvas:drawRect ('fill',8,0+i,765,5)
+  end
+  canvas:flush()
+  canvas:attrColor ('green')
+  for i=0,800,40 do 
+    canvas:drawRect ('fill',8+i,285,5,285)
+  end
+  for i=0,560,40 do 
+    canvas:drawRect ('fill',8,285+i,765,5)
+  end
+  canvas:flush()
+end
+grid()
 
+-- CLEAR GRID --
+local function clean () 
+  local BACK = canvas:new (w,h)
+  BACK:attrColor ('black')
+  BACK:clear ()
+  canvas:compose (0, 0, BACK)
+  canvas:flush ()
+end
 
- handlerBarco = function (evt)
-   -- movimentos
-		    if     evt.key == 'CURSOR_UP'    then
-                dy = dy - 40
-		    elseif evt.key == 'CURSOR_DOWN'  then
-                dy = dy + 40
-		    elseif evt.key == 'CURSOR_LEFT'  then
-                dx = dx - 40
-		    elseif evt.key == 'CURSOR_RIGHT' then
-                dx = dx + 40
-		    end 
-        canvas:drawRect ('fill',8+dx,285+dy,40,40)
-			     canvas:flush()
-        end
-	event.register(handlerBarco)
- 
+-- BOAT SET UP --
+local dx,dy
+dx=0
+dy=0
+handlerBarco = function (evt)
+  canvas:attrColor ('yellow')
+  canvas:drawRect ('fill',8+dx,285+dy,40,40)
+  canvas:flush()
+  --selection
+  px={}
+  py={}
+  local t=1
+  if  evt.key == 'ENTER'    then
+    px[t]=dx
+    py[t]=dy
+    t= t+1
+  end
+  local function redraw()
+    if t>1 then
+      for i=1,t,1 do
+        canvas:drawRect ('fill',8+px[i],285+py[i],40,40)
+        canvas:flush()
+      end
+    end
+  end
+  -- movement
+  if  evt.key == 'CURSOR_UP'    then
+    dy = dy - 40
+    clean()
+    grid()
+    redraw()
+  elseif evt.key == 'CURSOR_DOWN'  then
+    dy = dy + 40
+    clean()
+    grid()
+    redraw()
+  elseif evt.key == 'CURSOR_LEFT'  then
+    dx = dx - 40
+    clean()
+    grid()
+    redraw()
+  elseif evt.key == 'CURSOR_RIGHT' then
+    dx = dx + 40
+    clean()
+    grid()
+    redraw()
+  end 			    
+end     
+event.register(handlerBarco)
+
 --[[local nave
 local DX, DY = canvas:attrSize()
 local DRAWS = {}
