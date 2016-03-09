@@ -1,4 +1,6 @@
 local WIDTH, HEIGHT = canvas:attrSize ()
+local ship_spawn={}
+local count=0
 local GRID = {
   h_cells = 10,        -- num of horizontal cells
   v_cells = 10,        -- num of vertical cells
@@ -48,10 +50,30 @@ local function get_cell (x, y)
 end
 
 draw_grid ()
+
+local function draw_ship(x,y)
+  canvas:attrColor ('orange')
+  canvas:drawRect("fill",x,y,40,40)
+  canvas:flush()
+end
+
 event.register (
   function (e)
-      local i, j = get_cell (e.x, e.y)
-      print (('%d,%d->%d,%d'):format (e.x,e.y,i,j))
+    local i, j = get_cell (e.x, e.y)
+    print (('%d,%d->%d,%d'):format (e.x,e.y,i,j))
   end,
   {class='pointer', type='move'}
+)
+event.register ( -- checks the mouse clicks to create a ship
+  function (e)
+    local i, j = get_cell (e.x, e.y)    
+    if(i~=0 and j~=0) then
+      --[[for q=1,q<count,2 do
+        if ship_spawn[q]~= 200+40*(i-1) and ship_spawn[q+1]~=100+40*(j-1) then--]]
+          draw_ship(200+40*(i-1),100+40*(j-1))
+         --[[end 
+        end]]--
+    end
+  end,
+  {class='pointer', type='press'}
 )
