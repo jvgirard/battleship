@@ -54,12 +54,12 @@ local function draw_ship(x,y)
 end
 local function get_cell (x, y)
   local i, j = 0, 0
-  for t=0,9,1 do 
+  for t=0,GRID.h_cells-1,1 do 
     if x>WIDTH_OFF+GRID.cell_size*t and x<WIDTH_OFF+GRID.cell_size*(t+1) then
       i=t+1
     end
   end
-  for t=0,9,1 do 
+  for t=0,GRID.v_cells-1,1 do 
     if y>HEIGHT_OFF+GRID.cell_size*t and y<HEIGHT_OFF+GRID.cell_size*(t+1) then
       j=t+1
     end
