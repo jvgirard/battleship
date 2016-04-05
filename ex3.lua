@@ -1,19 +1,25 @@
 local WIDTH, HEIGHT = canvas:attrSize ()
 STATE = "pre_game"
 TAB={
-  {"~","~","~"},
-  {"~","~","~"},
-  {"~","~","~"},
+  {"~","~","~","~","~"},
+  {"~","~","~","~","~"},
+  {"~","~","~","~","~"},
+  {"~","~","~","~","~"},
+  {"~","~","~","~","~"},
 }
 local GRID = {
-  h_cells = #TAB[1],        -- num of horizontal cells
-  v_cells = #TAB,        -- num of vertical cells
+  h_cells = #TAB[1],   -- num of horizontal cells
+  v_cells = #TAB,      -- num of vertical cells
   cell_size = 40,      -- cell size in pixels
   color = 'yellow',    -- grid color
+  total=#TAB[1]*#TAB   -- num of grid cells
 }
+BOATS_NUM=0
 WIDTH_OFF = (WIDTH-GRID.h_cells*GRID.cell_size)/2
 HEIGHT_OFF = (HEIGHT-GRID.v_cells*GRID.cell_size)/2
+POINTS=GRID.total*100
 function quit ()
+  print("Final Ponctuation:",POINTS)
   os.exit(0)
 end
 local function draw_grid ()
@@ -63,10 +69,10 @@ end
 function put_cell(i,j,color)
   local w=GRID.h_cells*GRID.cell_size
   local h=GRID.v_cells*GRID.cell_size
-  local X=(WIDTH-GRID.h_cells)/2+GRID.cell_size*(i-1)-w/2+1
-  local Y=(HEIGHT-GRID.v_cells)/2+GRID.cell_size*(j-1)-h/2+1
+  local X=(WIDTH-GRID.h_cells)/2+GRID.cell_size*(i-1)-w/2+GRID.h_cells-2
+  local Y=(HEIGHT-GRID.v_cells)/2+GRID.cell_size*(j-1)-h/2+GRID.h_cells-2
   canvas:attrColor (color)
-  canvas:drawRect("fill",X,Y,40,40)
+  canvas:drawRect("fill",X,Y,40-GRID.h_cells+3,40-GRID.h_cells+3)
   canvas:flush()
 end
 
@@ -96,17 +102,10 @@ function redraw()
 end
 redraw()
 function acabou()
-  local p=GRID.h_cells*GRID.v_cells
-  for i=1,GRID.h_cells do
-    for j=1, GRID.v_cells do
-      if p>0 then
-        if TAB[i][j]~='~' or TAB[i][j]~='#' then
-          p=p-1
-        end
-      else
-        os.exit(0)
-      end
-    end
+  if GRID.total<=0 then
+    quit()
+  elseif BOATS_NUM<=0 then
+    quit()
   end
 end
 event.register(function(e)
@@ -125,12 +124,17 @@ event.register(function(e)
     if(i~=0 and j~=0) then
       if STATE=="pre_game" then
         TAB[i][j]='#'
+        BOATS_NUM=BOATS_NUM+1
         redraw()
       else
         if TAB[i][j]=='#' then
           TAB[i][j]='*'
+          GRID.total=GRID.total-1
+          BOATS_NUM=BOATS_NUM-1
         elseif TAB[i][j]=='~' then
           TAB[i][j]='@'
+          GRID.total=GRID.total-1
+          POINTS=POINTS-100
         end
         redraw()
         acabou()
