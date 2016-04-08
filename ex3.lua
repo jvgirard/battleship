@@ -28,7 +28,14 @@ HEIGHT_OFF = (HEIGHT-GRID.v_cells*GRID.cell_size)/2
 POINTS_1=GRID.total*100
 POINTS_2=GRID.total*100
 function quit ()
-  print("Final Ponctuation:\nPlayer1:",POINTS_1,"\nPlayer2:",POINTS_2)
+  if POINTS_1< POINTS_2 then
+    print("\nPlayer 1 WINS!\n")
+  elseif POINTS_1> POINTS_2 then
+    print("\nPlayer 2 WINS!\n")
+  else
+    print("\nIt is a Tie!\n")
+  end
+  print("Final Ponctuation:\nPlayer1:",POINTS_2,"\nPlayer2:",POINTS_1,"\n")
   os.exit(0)
 end
 local function draw_grid ()
